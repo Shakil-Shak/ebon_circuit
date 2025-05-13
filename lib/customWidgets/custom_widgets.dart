@@ -1,5 +1,7 @@
+import 'package:ebon_circuit/customWidgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:ebon_circuit/color.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomWidgets {
   static Widget elevatedButtonCustom(
@@ -84,43 +86,55 @@ class CustomWidgets {
       double width = 250.0,
       dynamic onchanged,
       double? height}) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: TextFormField(
-        maxLines: maxLine,
-        controller: controller,
-        keyboardType: keyboardType,
-        enabled: enabled,
-        validator: validatorFunction,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        onChanged: onchanged,
-        decoration: InputDecoration(
-            suffixText: suffixText,
-            filled: true,
-            fillColor: const Color(0xFFF2F2F2),
-            hintText: text,
-            border: OutlineInputBorder(
-              borderSide: const BorderSide(color: primaryColor),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: primaryColor),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(width: 2, color: primaryColor),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(width: 2, color: primaryColor),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(width: 2, color: primaryColor),
-              borderRadius: BorderRadius.circular(100),
-            )),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        customText(text),
+        SizedBox(
+          height: 8,
+        ),
+        SizedBox(
+          width: width,
+          height: height,
+          child: TextFormField(
+            maxLines: maxLine,
+            controller: controller,
+            keyboardType: keyboardType,
+            enabled: enabled,
+            validator: validatorFunction,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            onChanged: onchanged,
+            decoration: InputDecoration(
+                suffixText: suffixText,
+                filled: true,
+                hintStyle: GoogleFonts.merienda(
+                  letterSpacing: .5,
+                  color: primaryColor,
+                  fontSize: 14,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: primaryColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: primaryColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: 2, color: primaryColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: 2, color: primaryColor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: 2, color: primaryColor),
+                  borderRadius: BorderRadius.circular(8),
+                )),
+          ),
+        ),
+      ],
     );
   }
 

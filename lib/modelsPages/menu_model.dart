@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 class MenuModelFirebaseSetData {
   List<MenuModel>? menuIteamList;
   MenuModelFirebaseSetData({required this.menuIteamList});
 
   Map<String, dynamic> toMap() {
+    log(menuIteamList!.map((value) => value.toMap()).toList().toString());
     return {
       'menuIteamList': menuIteamList!.map((value) => value.toMap()).toList(),
     };

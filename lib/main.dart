@@ -1,4 +1,4 @@
-import 'package:ebon_circuit/Admin%20Pages/admin_home_page.dart';
+import 'package:ebon_circuit/new%20requairments/new_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Bangalicious Story',
+        title: 'Ebon Circuit',
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
-        home: AdminHomePage());
+        home: AdminLoginScreen());
   }
 }

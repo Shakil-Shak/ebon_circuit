@@ -1,8 +1,12 @@
 // ignore: file_names
+// ignore_for_file: library_private_types_in_public_api, prefer_final_fields
+
 import 'dart:io';
+
+import 'package:ebon_circuit/color.dart';
+import 'package:ebon_circuit/modelsPages/menu_model.dart';
 import 'package:ebon_circuit/customWidgets/custom_text.dart';
 import 'package:ebon_circuit/customWidgets/custom_widgets.dart';
-import 'package:ebon_circuit/modelsPages/menu_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,11 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-import '../color.dart';
-
 // ignore: must_be_immutable
 class AddCatagory extends StatefulWidget {
   MenuModelFirebaseSetData? myMenuIteamList;
+
   bool enable;
   String? catagoriName;
   AddCatagory(
@@ -38,7 +41,6 @@ class _AddCatagory extends State<AddCatagory> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (!widget.enable) {
       catagoryController.text = widget.catagoriName!;
@@ -91,47 +93,56 @@ class _AddCatagory extends State<AddCatagory> {
         title: customText((!widget.enable) ? "Add a iteam" : "Add a Catagory"),
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 24),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomWidgets.textFormFieldCustom(
+                  width: double.infinity,
                   enabled: widget.enable,
                   text: "Catagory Name",
                   controller: catagoryController),
               const SizedBox(
-                height: 10,
+                height: 16,
               ),
               CustomWidgets.textFormFieldCustom(
-                  text: "Iteam Name", controller: iteamNameController),
+                  width: double.infinity,
+                  text: "Iteam Name",
+                  controller: iteamNameController),
               const SizedBox(
-                height: 10,
+                height: 16,
               ),
               CustomWidgets.textFormFieldCustom(
-                  text: "Description", controller: descriptionController),
+                  width: double.infinity,
+                  text: "Description",
+                  maxLine: 4,
+                  controller: descriptionController),
               const SizedBox(
-                height: 10,
+                height: 16,
               ),
               CustomWidgets.textFormFieldCustom(
-                  text: "Price", controller: priceController),
+                  width: double.infinity,
+                  text: "Price",
+                  controller: priceController),
               const SizedBox(
-                height: 10,
+                height: 16,
               ),
               CustomWidgets.textFormFieldCustom(
-                  text: "Discount", controller: discountontroller),
+                  width: double.infinity,
+                  text: "Discount",
+                  controller: discountontroller),
               const SizedBox(
-                height: 10,
+                height: 16,
               ),
               InkWell(
                 onTap: () {
                   imageDialogChooser();
                 },
                 child: Container(
-                  width: 250,
-                  height: 250,
+                  height: 200,
                   decoration: BoxDecoration(
-                      color: Colors.yellow.shade50,
                       border: Border.all(color: Colors.yellow),
                       borderRadius: BorderRadius.circular(20)),
                   child: (imageFile != null)
@@ -139,7 +150,11 @@ class _AddCatagory extends State<AddCatagory> {
                       : const Center(
                           child: CircleAvatar(
                             radius: 25,
-                            child: Icon(Icons.add),
+                            backgroundColor: primaryColor,
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                 ),
@@ -150,7 +165,7 @@ class _AddCatagory extends State<AddCatagory> {
 
               const SizedBox(height: 16),
               customText('Additional Images', fontWeigth: FontWeight.bold),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -158,14 +173,14 @@ class _AddCatagory extends State<AddCatagory> {
                     .map((image) => Stack(
                           children: [
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 160,
+                              height: 160,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                      width: 2, color: primaryColor)),
+                                      width: 2, color: Colors.black)),
                               child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(16),
                                   child: Image.file(image)),
                             ),
                             Positioned(
@@ -234,7 +249,7 @@ class _AddCatagory extends State<AddCatagory> {
               const SizedBox(
                 height: 20,
               ),
-
+              // customText("You can add more locations\non edit panel",
               //     alinment: TextAlign.center, softWrap: true),
               const SizedBox(
                 height: 20,
