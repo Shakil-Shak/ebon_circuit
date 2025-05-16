@@ -10,6 +10,7 @@ import 'package:ebon_circuit/customWidgets/custom_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -36,8 +37,8 @@ class _AddCatagory extends State<AddCatagory> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController discountontroller = TextEditingController();
-  File? imageFile;
-  List<File> _additionalImages = [];
+  dynamic imageFile; // File for mobile, Uint8List for web
+  List<dynamic> _additionalImages = []; // List of File or Uint8List
 
   @override
   void initState() {
@@ -47,16 +48,7 @@ class _AddCatagory extends State<AddCatagory> {
     }
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _additionalImages.add(File(pickedFile.path));
-      });
-    }
-  }
-
-  Future<String> _uploadFile(File file, String path) async {
+  Future<String> _uploadFile(dynamic file, String path) async {
     try {
       Reference storage = FirebaseStorage.instance
           .ref()
@@ -64,10 +56,16 @@ class _AddCatagory extends State<AddCatagory> {
           .child(FirebaseAuth.instance.currentUser!.uid)
           .child(const Uuid().v6());
 
-      final uploadTask = storage.putFile(file);
-      await uploadTask.whenComplete(() {});
-      final downloadUrl = await storage.getDownloadURL();
-      return downloadUrl;
+      UploadTask uploadTask;
+      if (kIsWeb) {
+        uploadTask =
+            storage.putData(file, SettableMetadata(contentType: 'image/jpeg'));
+      } else {
+        uploadTask = storage.putFile(file);
+      }
+
+      await uploadTask;
+      return await storage.getDownloadURL();
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Failed to upload file: $e')));
@@ -146,15 +144,14 @@ class _AddCatagory extends State<AddCatagory> {
                       border: Border.all(color: Colors.yellow),
                       borderRadius: BorderRadius.circular(20)),
                   child: (imageFile != null)
-                      ? Image(image: FileImage(imageFile!))
+                      ? (kIsWeb
+                          ? Image.memory(imageFile)
+                          : Image.file(imageFile))
                       : const Center(
                           child: CircleAvatar(
                             radius: 25,
                             backgroundColor: primaryColor,
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.black,
-                            ),
+                            child: Icon(Icons.add, color: Colors.black),
                           ),
                         ),
                 ),
@@ -181,7 +178,9 @@ class _AddCatagory extends State<AddCatagory> {
                                       width: 2, color: Colors.black)),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
-                                  child: Image.file(image)),
+                                  child: (kIsWeb
+                                      ? Image.memory(image)
+                                      : Image.file(image))),
                             ),
                             Positioned(
                               right: 0,
@@ -298,12 +297,32 @@ class _AddCatagory extends State<AddCatagory> {
   void image_picker(ImageSource source) async {
     XFile? file = await ImagePicker().pickImage(source: source);
     if (file != null) {
-      String? path = file.path;
-      print("image android picked");
+      if (kIsWeb) {
+        Uint8List bytes = await file.readAsBytes();
+        setState(() {
+          imageFile = bytes;
+        });
+      } else {
+        setState(() {
+          imageFile = File(file.path);
+        });
+      }
+    }
+  }
 
-      setState(() {
-        imageFile = File(path);
-      });
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        Uint8List bytes = await pickedFile.readAsBytes();
+        setState(() {
+          _additionalImages.add(bytes);
+        });
+      } else {
+        setState(() {
+          _additionalImages.add(File(pickedFile.path));
+        });
+      }
     }
   }
 
@@ -324,7 +343,7 @@ class _AddCatagory extends State<AddCatagory> {
           .then((value) {
         storage.getDownloadURL().then((value) async {
           // Separate local files and URLs
-          List<File> localFiles = _additionalImages;
+          List<File> localFiles = _additionalImages as List<File>;
           List<String> uploadedUrls = [];
           try {
             if (localFiles.isNotEmpty) {
